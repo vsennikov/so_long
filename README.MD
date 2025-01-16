@@ -15,7 +15,7 @@ To run this program, you need to use MiniLibX, a simple X-Window (X11R6) program
 
 1. Clone the repository:
 	```sh
-	git clone https://github.com/yourusername/so_long.git
+	git clone https://github.com/vsennikov/so_long.git
 	```
 2. Navigate to the project directory:
 	```sh
