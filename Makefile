@@ -1,14 +1,14 @@
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -g
 SRCS = main.c error_msg.c map_validation/name_validation.c map_validation/map_parsing.c \
-map_validation/map_validation.c map_validation/flood_fill.c
+map_validation/map_validation.c map_validation/flood_fill.c game_control/init_map.c \
+game_control/moovement.c map_validation/pars_vals_erros.c game_control/check_displaying.c
 LIBFT_PATH = libft
 LIBFT = $(LIBFT_PATH)/libft.a
 INCLUDES = -I./$(LIBFT_PATH)
 GNL = gnl/get_next_line.c gnl/get_next_line_utils.c
 GNL_O = $(GNL:.c=.o)
 FRAEMWORK = -lmlx -lX11 -lXext -lm
-# minilibx-linux/libmlx.a -Lminilibx-linux -lmlx -lX11 -lXext -lm
 
 OBJS = $(SRCS:.c=.o)
 

@@ -6,7 +6,7 @@
 /*   By: vsenniko <vsenniko@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 16:27:33 by vsenniko          #+#    #+#             */
-/*   Updated: 2024/11/21 18:32:58 by vsenniko         ###   ########.fr       */
+/*   Updated: 2024/11/26 14:20:32 by vsenniko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,16 +67,16 @@ static void	return_map_back(t_map *map, t_player *player)
 	int	j;
 
 	i = 0;
-	while(map->values[i])
+	while (map->values[i])
 	{
 		j = 0;
 		while (map->values[i][j])
 		{
 			if (map->values[i][j] == '2')
 				map->values[i][j] = '0';
-			else if(map->values[i][j] == '3')
+			else if (map->values[i][j] == '3')
 				map->values[i][j] = 'C';
-			else if(map->values[i][j] == '4')
+			else if (map->values[i][j] == '4')
 				map->values[i][j] = 'E';
 			j++;
 		}
@@ -85,16 +85,17 @@ static void	return_map_back(t_map *map, t_player *player)
 	map->values[player->x_pos][player->y_pos] = 'P';
 }
 
-void	flood_check(t_map *map, t_player *player)
+void	flood_check(t_game *game)
 {
-	map->col_for_valid = map->num_con + map->num_ex;
-	find_player(map, player);
-	dfs(map, player->x_pos, player->y_pos);
-	if (map->col_for_valid != 0)
+	game->map->col_for_valid = game->map->num_con + game->map->num_ex;
+	find_player(game->map, game->player);
+	dfs(game->map, game->player->x_pos, game->player->y_pos);
+	if (game->map->col_for_valid != 0)
 	{
-		free_map(map);
-		free(player);
+		free_map(game->map);
+		free(game->player);
+		free(game);
 		error_exit("coins and/or exit unreachable");
 	}
-	return_map_back(map, player);
+	return_map_back(game->map, game->player);
 }

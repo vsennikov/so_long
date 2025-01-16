@@ -1,29 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   pars_vals_erros.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: vsenniko <vsenniko@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/20 14:27:17 by vsenniko          #+#    #+#             */
-/*   Updated: 2024/12/02 12:56:34 by vsenniko         ###   ########.fr       */
+/*   Created: 2024/11/26 15:52:42 by vsenniko          #+#    #+#             */
+/*   Updated: 2024/11/29 15:32:34 by vsenniko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef GET_NEXT_LINE_H
-# define GET_NEXT_LINE_H
+#include "../so_long.h"
 
-# include <unistd.h>
-# include <stdlib.h>
+void	error_pars(t_game *game, char *msg, int fd)
+{
+	if (game->map->values)
+		free(game->map->values);
+	free(game->map);
+	free(game->player);
+	close(fd);
+	free(game);
+	error_exit(msg);
+}
 
-# ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 4096
-# endif
-
-char	*get_next_line(int fd, int *ended);
-int		check_nl(char *buff);
-char	*init_buf(size_t buff_size);
-char	*transfer_str(char *old, char *buff, size_t buff_size);
-char	*return_line(char *saver);
-char	*reorganise_saver(char *saver);
-#endif
+void	error_ass(t_game *game, char *msg)
+{
+	free_map(game->map);
+	free(game->player);
+	free(game);
+	error_exit(msg);
+}

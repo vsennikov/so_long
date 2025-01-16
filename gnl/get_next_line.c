@@ -6,7 +6,7 @@
 /*   By: vsenniko <vsenniko@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/20 20:10:49 by vsenniko          #+#    #+#             */
-/*   Updated: 2024/11/21 12:07:33 by vsenniko         ###   ########.fr       */
+/*   Updated: 2024/12/02 13:06:17 by vsenniko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,16 +32,16 @@ void	*free_all(char **saver, char *buffer)
 	return (NULL);
 }
 
-char	*substract_line_from_saver(char **saver, char *line)
+char	*substract_line_from_saver(char **saver, char *line, int *ended)
 {
 	if (*saver != NULL && *saver[0] != '\0')
 	{
 		line = return_line(*saver);
 		if (line == NULL)
-			return (free_all(saver, line));
+			return (*ended = -1, free_all(saver, line));
 		*saver = reorganise_saver(*saver);
 		if (*saver == NULL)
-			return (free_all(saver, line));
+			return (*ended = -1, free_all(saver, line));
 	}
 	else
 	{
@@ -53,7 +53,7 @@ char	*substract_line_from_saver(char **saver, char *line)
 	return (line);
 }
 
-char	*read_file(int found_nl, char **saver, int fd)
+char	*read_file(int found_nl, char **saver, int fd, int *ended)
 {
 	int		end_of_file;
 	char	*buff;
@@ -65,24 +65,24 @@ char	*read_file(int found_nl, char **saver, int fd)
 	{
 		buff = init_buf(BUFFER_SIZE);
 		if (buff == NULL)
-			return (free_all(saver, buff));
+			return (*ended = -1, free_all(saver, buff));
 		end_of_file = read(fd, buff, BUFFER_SIZE);
 		if (end_of_file < 0)
-			return (free_all(saver, buff));
+			return (*ended = -1, free_all(saver, buff));
 		found_nl = check_nl(buff);
 		if (end_of_file != 0)
 		{
 			*saver = transfer_str(*saver, buff, end_of_file);
 			if (*saver == NULL)
-				return (free_all(saver, buff));
+				return (*ended = -1, free_all(saver, buff));
 		}
 		else
 			free(buff);
 	}
-	return (substract_line_from_saver(saver, line));
+	return (substract_line_from_saver(saver, line, ended));
 }
 
-char	*get_next_line(int fd)
+char	*get_next_line(int fd, int *ended)
 {
 	static char	*saver = NULL;
 	char		*line;
@@ -93,20 +93,20 @@ char	*get_next_line(int fd)
 	{
 		if (saver != NULL)
 		{
-			free (saver);
+			free(saver);
 			saver = NULL;
 		}
-		return (NULL);
+		return (*ended = -1, NULL);
 	}
 	found_nl = 0;
 	if (check_nl(saver))
 		found_nl = 1;
 	if (saver != NULL)
 		found_nl = check_nl(saver);
-	line = read_file(found_nl, &saver, fd);
-	if (line != NULL && line[0] == '\0')
-		return (free_all(&saver, line));
-	else if (line == NULL)
+	line = read_file(found_nl, &saver, fd, ended);
+	if (line == NULL && *ended == -1)
 		return (NULL);
-	return (line);
+	else if (line == NULL)
+		return (*ended = 1, NULL);
+	return (*ended = 0, line);
 }
